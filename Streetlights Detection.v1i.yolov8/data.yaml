@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['Streetlight', 'Streetlights 1', 'Streetlights 6']
+
+roboflow:
+  workspace: nn
+  project: streetlights-detection
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/nn/streetlights-detection/dataset/1
