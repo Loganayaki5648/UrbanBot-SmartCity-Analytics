@@ -1,0 +1,9 @@
+﻿streamlit
+pandas
+numpy
+scikit-learn
+joblib
+opencv-python
+Pillow
+ultralytics
+tensorflow==2.15.0
