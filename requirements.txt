@@ -7,3 +7,4 @@ opencv-python
 Pillow
 ultralytics
 tensorflow==2.15.0
+
