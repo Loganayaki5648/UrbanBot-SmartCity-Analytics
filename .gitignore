@@ -5,4 +5,4 @@ models/*.h5
 *.pt
 Datasets/
 files/
-models/
+models/.env
