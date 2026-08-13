@@ -1,4 +1,32 @@
 import streamlit as st
+import os
+import smtplib
+from email.message import EmailMessage
+
+def send_alert_email():
+    sender = "logukathir1704@gmail.com"
+    receiver = "logukathir1704@gmail.com"
+
+    msg = EmailMessage()
+    msg["Subject"] = "UrbanBot Smart City Alert"
+    msg["From"] = sender
+    msg["To"] = receiver
+
+    msg.set_content("""
+UrbanBot Smart City Alert
+
+Road Accident Detected - Anna Nagar
+High Traffic Congestion - GST Road
+Faulty Street Light - Main Road
+Poor Air Quality - Industrial Area
+High Crowd Density - Bus Stand
+""")
+
+    password = os.getenv("GMAIL_APP_PASSWORD")
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(sender, password)
+        smtp.send_message(msg)
 import pandas as pd
 import joblib
 from ultralytics import YOLO
@@ -24,12 +52,11 @@ vectorizer = joblib.load(
     "models/vectorizer.pkl"
 )
 
-from tensorflow.keras.models import load_model
 
 @st.cache_resource
 def load_crowd_model():
     return load_model(
-        "models/crowd_cnn_model.keras"
+        "models/crowd_cnn_model_rebuilt.keras"
      )
 
 crowd_model = load_crowd_model()
@@ -295,11 +322,12 @@ elif option == "Alerts":
 
     if st.button("Refresh Alerts"):
 
+        send_alert_email()
+
         st.success("Alerts Updated Successfully")
 
 
 # ---------------- AI CHATBOT ---------------- #
-
 elif option == "AI Chatbot":
 
     st.title("AI Chatbot")
@@ -311,16 +339,20 @@ elif option == "AI Chatbot":
     if st.button("Ask"):
 
         if question == "":
-
             st.warning("Please enter a question.")
 
         else:
 
+            from rag_llm import retrieve_context
+
+            results = retrieve_context(question)
+
             st.success("Response Generated")
 
-            st.write("Sample Response:")
-            st.write("The AI Chatbot will answer your question after integrating the LLM model.")
+            st.write("Relevant UrbanBot Information:")
 
+            for result in results:
+                st.write("- " + result)
 
 # ---------------- DASHBOARD ---------------- #
 
@@ -375,6 +407,6 @@ from ultralytics import YOLO
 traffic_model = joblib.load("models/metro traffic_model.pkl")
 complaint_model = joblib.load("models/citizen_complaint_model.pkl")
 vectorizer = joblib.load("models/vectorizer.pkl")
-crowd_model = load_model("models/crowd_cnn_model.keras")
+# crowd_model = load_model("models/crowd_cnn_model_rebuilt.keras")
 air_model = joblib.load("models/aqi_model.pkl")
 pothole_model = YOLO("models/yolov8n.pt")
